@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.gientech.springboot.mapper.CoffeeMapper">
+
+    <resultMap id="BaseResultMap" type="com.gientech.springboot.model.Coffee">
+        <id column="ID" jdbcType="BIGINT" property="id" />
+        <result column="NAME" jdbcType="VARCHAR" property="name" />
+        <result column="PRICE" jdbcType="BIGINT" property="price" typeHandler="com.gientech.springboot.handler.MoneyTypeHandler" />
+        <result column="CREATE_TIME" jdbcType="TIMESTAMP" property="createTime" />
+        <result column="UPDATE_TIME" jdbcType="TIMESTAMP" property="updateTime" />
+    </resultMap>
+
+
+
+    <insert id="saveCoffee" parameterType="com.gientech.springboot.model.Coffee" useGeneratedKeys="true" keyProperty="id" keyColumn="id">
+        insert into t_coffee (name, price, create_time, update_time)
+        values
+        (#{name},#{price},#{createTime},#{updateTime})
+    </insert>
+
+    <select id="selectCoffeeByName" parameterType="java.lang.String" resultType="com.gientech.springboot.model.Coffee" >
+        select  * from  t_coffee where name=#{name}
+    </select>
+
+    <select id="selectAllCoffee" parameterType="com.gientech.springboot.model.Coffee" resultType="java.util.Map" >
+        select  * from  t_coffee
+    </select>
+
+
+    <update id="updateCoffee" parameterType="com.gientech.springboot.model.Coffee">
+        update t_coffee
+        set name=#{name},price=#{price},
+            create_time=#{createTime},update_time=#{updateTime}
+        where id=#{id}
+    </update>
+
+    <delete id="deleteCoffee" parameterType="com.gientech.springboot.model.Coffee">
+        delete from t_coffee where id=#{id}
+    </delete>
+
+    <!-- 根据id批量查询 -->
+    <select id="selectCoffeeListByIds"  resultType="java.util.Map">
+        select * from t_coffee where id in
+        <foreach collection="coffeeIds" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </select>
+
+
+    <!-- 翻页查询 -->
+    <select id="findAllWithParam"  resultType="java.util.Map">
+        select * from t_coffee order by id
+    </select>
+
+</mapper>
